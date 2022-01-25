@@ -1,31 +1,30 @@
 <template  >
-  <!-- 
-  -->
-    <div id="app">
-        <p>
-          <router-link to="/"></router-link>
-          <router-link to="/question"></router-link>
-          <router-link to="/result"></router-link>
-        </p>
-        <router-view></router-view>
-    </div>
+  <!-- Start of the App template. It will only contain a router link to the other Vue-components-->
+  <div id="app">
+    <p>
+      <router-link to="/"></router-link>
+      <router-link to="/question"></router-link>
+      <router-link to="/result"></router-link>
+    </p>
+    <router-view></router-view>
+  </div>
 </template> 
-
 <script>
-//import StartScreen from './components/StartScreen.vue'
-//import App from './App.vue'
 
 export default {
-  name: 'App',
-  components: { },
-  methods: {}
-}
+  name: "App",
+  components: {},
+  methods: {},
+};
+
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+
+/* ---Style that is added he is defined for the in a global scope for all the components--*/
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap");
 #app {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -33,9 +32,7 @@ export default {
   margin-top: 60px;
 }
 
-body {
-  
-}
+body {}
 
 .btn {
   display: inline-block;

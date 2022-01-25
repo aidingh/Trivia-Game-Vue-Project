@@ -6,18 +6,35 @@ import ResultScreen from './components/ResultScreen.vue'
 import {createRouter, createWebHistory } from 'vue-router'
 import {createStore}  from 'vuex'
 
+/**
+ * Defines a routing object with path to the screen and component which is the screen object.
+ * @type {!Array<{path, component}>}
+ */
 const routes = [
     { path: '/', component: StartScreen},
     { path: '/question', component: QuestionScreen},
     { path: '/result', component: ResultScreen}
   ]
 
+  /**
+ * Defines a vue-router object with routes object as a parameter. 
+ * When the application is created the routes object is added to the app instance.
+ * @type {!createRouter<({history, routes, linkActiveClass})>}
+ */
 const router = createRouter({
     history: createWebHistory(),
     routes: routes,
     linkActiveClass: 'active',
 });
 
+
+/**
+ * Defines a Vuex object with routes object. This object is used for state management for the application.
+ * When the application is created the routes object is added to the app instance.
+ * All the variables who need to be in a global scope are defined in the state function of the object.
+ * Actions and mutations are function to update the UI when a new state needs to change.
+ * @type {!createStore<({history, state(), actions, mutations})>}
+ */
 const store = createStore({
     state(){
         
@@ -35,10 +52,39 @@ const store = createStore({
             questionList: [],
             answers: [],
             currentUserObject : "",
+            currentServiceUrl: "",
         }
     },
 
     actions: {
+
+        async getNewQuestions(state, ref){
+            let response = fetch(ref.currentServiceUrl);
+
+            if ((await response).status == 200) {
+              let data = await (await response).json();
+              ref.globalTriviaDataJson = data;
+              ref.category = data.results[0].category;
+              ref.difficulty = data.results[0].difficulty;
+              ref.nextQuestion = data.results[0].question;
+              return data;
+            }
+        },
+
+        async getNewQuestionsMulti(state, ref){
+            let response = fetch(ref.currentServiceUrl);
+
+            if ((await response).status == 200) {
+              let data = await (await response).json();
+              ref.globalTriviaDataJson = data;
+
+              ref.nextQuestion = data.results[0].question;
+              ref.questionList = data.results[0].incorrect_answers
+              ref.questionList.push(data.results[0].correct_answer);
+              console.log(ref.nextQuestion);
+              return data;
+            }
+        },
 
             async updateUserScore(state, ref){
                 console.log("Updateing highscore " + ref);
@@ -140,18 +186,18 @@ const store = createStore({
         },
 
         resetQuestion(state){
+            store.dispatch('getNewQuestions', state);
             state.nextQuestion = state.globalTriviaDataJson.results[0].question;
-            console.log(state.nextQuestion);
+
             state.answers.length = 0;
             state.displayScore = 0;
             router.push({ path: '/question' });
         },
 
         resetQuestionMulti(state){
-            state.nextQuestion = state.globalTriviaDataJson.results[0].question;
-            state.questionList = state.globalTriviaDataJson.results[0].incorrect_answers
-            state.questionList.push(state.globalTriviaDataJson.results[0].correct_answer);
-            console.log(state.nextQuestion);
+            console.log(state.currentServiceUrl);
+            store.dispatch('getNewQuestionsMulti', state);
+
             state.answers.length = 0;
             state.displayScore = 0;
             router.push({ path: '/question' });
