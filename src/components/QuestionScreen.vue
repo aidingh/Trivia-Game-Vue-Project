@@ -5,11 +5,13 @@
     <div class="row">
         <div class="card">
             <div class="cardItemColumn">
-            <label for="label"><b>Category </b></label>
-            <p id= "category" >{{this.$store.state.category}}</p>
+            <label for="label" style="margin-right: 10px"><b>Category: </b></label>
+            <p id= "category" style="display:inline-block" >{{this.$store.state.category}}</p>
         </div>
-        
-        <p id= "difficulty">{{this.$store.state.difficulty}}</p>
+        <div class="cardItemColumn">
+        <label for="label" style="margin-right: 10px"><b>Difficulty: </b></label>
+        <p id= "difficulty" style="display:inline-block">{{this.$store.state.difficulty}}</p>
+        </div>
         <p id= "question">{{this.$store.state.nextQuestion}}</p>
         <div class="btn-group">
         <div v-if="this.$store.state.toggleButton">
@@ -18,10 +20,10 @@
         </div>
 
         <div v-if="!this.$store.state.toggleButton">
-          <button id="btn-ans1" style="margin:5px;" type="button" class="btn" v-on:click="navToNextQuestionMulti('a')">{{this.$store.state.questionList[0]}}</button>
-          <button id="btn-ans2" style="margin:5px;" type="button" class="btn" v-on:click="navToNextQuestionMulti('b')">{{this.$store.state.questionList[1]}}</button>
-          <button id="btn-ans3" style="margin:5px;" type="button" class="btn" v-on:click="navToNextQuestionMulti('c')">{{this.$store.state.questionList[2]}}</button>
-          <button id="btn-ans4" style="margin:5px;" type="button" class="btn" v-on:click="navToNextQuestionMulti('d')">{{this.$store.state.questionList[3]}}</button>
+          <button id="btn-ans1" style="margin:5px;" type="button" class="btn" v-on:click="navToNextQuestionMulti(this.$store.state.questionList[0])">{{this.$store.state.questionList[0]}}</button>
+          <button id="btn-ans2" style="margin:5px;" type="button" class="btn" v-on:click="navToNextQuestionMulti(this.$store.state.questionList[1])">{{this.$store.state.questionList[1]}}</button>
+          <button id="btn-ans3" style="margin:5px;" type="button" class="btn" v-on:click="navToNextQuestionMulti(this.$store.state.questionList[2])">{{this.$store.state.questionList[2]}}</button>
+          <button id="btn-ans4" style="margin:5px;" type="button" class="btn" v-on:click="navToNextQuestionMulti(this.$store.state.questionList[3])">{{this.$store.state.questionList[3]}}</button>
         </div>
 
         </div>

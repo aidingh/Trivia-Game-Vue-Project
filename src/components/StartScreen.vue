@@ -1,7 +1,7 @@
 <template v-if="dataReady">
 
     <header >
-        <h2 class= 'display-1' style = "text-align: center;" id="header1">Trivia Game!</h2>
+    <h2 class= 'display-1' style = "text-align: center;" id="header1">Trivia Game!</h2>
     <div class="row">
       <div class="card">
         <h2 id="usrInputTitle">Enter input!</h2>
@@ -11,7 +11,7 @@
         </div>
         <div class="cardItemColumn">
             <label for="label"><b>Enter number of questions:  </b></label>
-            <input id='numberOfQuestForm' type="number" placeholder="limit is 50 " name="repay" required>  
+            <input id='numberOfQuestForm' value="1" min="1" max="50" type="number" placeholder="1" name="numberInput" required>  
         </div>
         <div class="cardItemColumn">
             <label for="label"><b>Enter categories: </b></label>
@@ -34,7 +34,7 @@
             </select>
         </div>
         <div class="btn-group">
-          <button style="margin:5px;" type="button" class="btn" v-on:click="initQuestions()">Start Game!</button>
+          <button style="margin:20px;" type="button" class="btn" v-on:click="initQuestions()">Start Game!</button>
         </div>
       </div>   
     </div>
@@ -69,9 +69,7 @@ export default {
             console.log('The cat value is: ', e.target.value)
         },
         navigateToQuestionScreen() {
-
             this.$router.push({ path: '/question' });
-
         },
         setUserToApi: async function(userName, intiHighScore, apiURL, apiKey) {
             
@@ -83,13 +81,13 @@ export default {
             },
             body: JSON.stringify({ 
                 username: userName, 
-                highScore: intiHighScore 
+                score: intiHighScore 
             })
             });
 
-            if((await postRes).status == 200){
-                postRes = await (await postRes).json();
-                return;
+            if((await postRes).status == 201){
+                let data = await (await postRes).json();
+                return data;
             }
             else{
                 console.log('Could not register user with service url: ' + apiURL);
@@ -138,7 +136,7 @@ export default {
         
         let response = fetch(serviceUrl);
 
-        if((await response).status == 200 && type == "boolean"){
+        if((await response).status == 200 && (type == "boolean"  || type == "Any Type")){
             let data = await (await response).json();
 
             this.$store.state.globalTriviaDataJson = data;
@@ -182,36 +180,37 @@ export default {
             var categoryList = document.querySelector("#categoryForm").value;
             var typeList = document.querySelector("#typeForm").value;
 
-            console.log(diff);
-            console.log(userName);
-            console.log(numberOfQ);
-            console.log(categoryList);
-            console.log(typeList);
-
-            
             let apiURL = "https://noroff-trivia-api.herokuapp.com";
             let apiKey = "1b23229d-18ca-48ec-bdeb-9c7445384f23";
             let userUrl = 'https://opentdb.com/api.php?amount=' + numberOfQ + '&category=' + categoryList + '&difficulty=' + diff + '&type=' + typeList;
 
             if(userName == ""){
                 alert("User name field is empty");
-                console.log("default play");
                 return;           
             }
            else if(userName != ""){
                 let userResponse = fetch(`${apiURL}/trivia?username=${userName}`)
                 if((await userResponse).status == 200){
-                    console.log("User found");
-                    //get user high score
-                    await this.initGame(userUrl, typeList);
-                    this.dataReady = true;
-                    return;
-                }
-                else{
-                    console.log("User set");
-                    await this.setUserToApi(userName,"0",apiURL, apiKey);
-                    await this.initGame(userUrl, typeList);
-                    this.dataReady = true;
+                    let data = await (await userResponse).json();
+                    console.log("userResponse: " +  JSON.stringify(data));
+                    
+                    if(data.length == 0){
+                        console.log("User set");
+                        let temp = await this.setUserToApi(userName,"0",apiURL, apiKey);
+                        this.$store.state.currentUserObject = [{username:temp.username, score:temp.score, id:temp.id}];
+                        console.log(JSON.stringify(this.$store.state.currentUserObject));
+                        await this.initGame(userUrl, typeList);
+                        this.dataReady = true;
+                        return;
+                    }
+                    else{
+                        console.log("user found");
+                        this.$store.state.currentUserObject = data;
+                        console.log(JSON.stringify(this.$store.state.currentUserObject));
+                        await this.initGame(userUrl, typeList);
+                        this.dataReady = true;
+                        return;
+                        } 
                 }
             }
         }
@@ -230,7 +229,6 @@ header {
   text-align: center;
   margin-bottom: 20px;
 }
-
 
 /* Float four columns side by side */
 .column {
@@ -310,6 +308,5 @@ header {
     margin-top: -100px;
     width: 400px;
     margin-left: -200px;
-   
 }
 </style>

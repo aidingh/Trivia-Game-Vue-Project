@@ -4,9 +4,44 @@
         <h2>Results!</h2>
     <div class="row">
         <div class="card">
+            <div class="cardItemColumn" >
+                <label for="label" style="margin-right: 10px"><b>User: </b></label>
+                <p id= "username" style="display:inline-block" >{{this.$store.state.currentUserObject[0].username}}</p>
+             </div>
+             <div class="cardItemColumn" >
+                <label for="label" style="margin-right: 10px"><b>New score: </b></label>
+                <p id= "result" style="display:inline-block" >{{this.$store.state.displayScore}}</p>
+             </div>
+             <div class="cardItemColumn" >
+                <label for="label" style="margin-right: 10px"><b>Best score: </b></label>
+                <p id= "result" style="display:inline-block" >{{this.$store.state.currentUserObject[0].score}}</p>
+             </div>
 
-            <p id= "result">{{this.$store.state.displayScore}}</p>
-            <p id="questionList">{{this.$store.state.globalTriviaDataJson.results.questions}}</p>
+                 <div class="cardItemColumn">
+                <label for="label"></label>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Questions</th>
+                            <th>Correct answers</th>
+                            <th>Your answers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="quest in this.$store.state.globalTriviaDataJson.results" :key="quest.id" >
+                            <td>{{quest.question}}</td>
+                            <td>{{quest.correct_answer}}</td>
+
+                        </tr>
+                            <tr v-for="ans in this.$store.state.answers" :key="ans.id">
+                            <td>{{ans}}</td>
+                            </tr>
+
+                    </tbody>
+                </table>
+                </div>   
+
+            <p id="questionList">{{this.$store.state.globalTriviaDataJson.results[0].questions}}</p>
 
         <div class="btn-group">
           <button id="btn-true" style="margin:5px;" type="button" class="btn" v-on:click="navigateStartScreen()">Back to start!</button>
@@ -41,14 +76,13 @@ export default {
     },
 
     computed: {
-        ...mapState(["correctAnswers"], ["globalTriviaDataJson"]),
+        ...mapState(["correctAnswers"]),
+        ...mapState(["globalTriviaDataJson"]),
     },
 
     mounted() {
-    
 
     },
-
 
     methods: {
         navigateStartScreen(){
@@ -56,6 +90,7 @@ export default {
         },
 
         rePlay(){
+            this.$store.state.answers.length = 0;
             this.$router.push({ path: '/question' });
         },
 
@@ -69,21 +104,21 @@ export default {
         tester(){
 
         },
-
     }
-    
 }
 </script>
 
 
 <style scoped>
 header {
-
-
   justify-content: space-between;
   align-items: center;
   text-align: center;
   margin-bottom: 20px;
+}
+
+.grid {
+    display:inline-block;
 }
 
 
@@ -134,40 +169,5 @@ header {
   align-items: center;
   align-content: center;
 }
-
-/* Input fields */
-.form-container input[type=string] {
-  width: 100%;
-  padding: 15px;
-  margin: 5px 0 22px 0;
-  border: none;
-  background: #f1f1f1;
-}
-
-/* Set a style for the repay button */
-.form-container .btn {
-  background-color: #04AA6D;
-  color: white;
-  padding: 0px 0px;
-  border: none;
-  cursor: pointer;
-  width: 50%;
-  margin-bottom:10px;
-  opacity: 0.8;
-}
-
-/* Set a style for the form container. */
-.form-container{
-  position: absolute;
-    left: 50%;
-    top: 20%;
-    height: 200px;
-    margin-top: -100px;
-    width: 400px;
-    margin-left: -200px;
-   
-}
-
-
 
 </style>

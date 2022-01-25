@@ -3,9 +3,9 @@
   -->
     <div id="app">
         <p>
-            <router-link to="/"></router-link>
-            <router-link to="/question"></router-link>
-            <router-link to="/result"></router-link>
+          <router-link to="/"></router-link>
+          <router-link to="/question"></router-link>
+          <router-link to="/result"></router-link>
         </p>
         <router-view></router-view>
     </div>
