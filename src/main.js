@@ -57,8 +57,14 @@ const store = createStore({
     },
 
     actions: {
-
-        async getNewQuestions(state, ref){
+        /**
+         * Function is ran on replay. And sets new questions with the same parameters as the game before.
+         * As the function is async it needs to be defined as a action. 
+         * @param {object} context defined but not used. It can be used to commit other mutation functions
+         * @param {state()} ref instance of state
+         * @return {object} returns json object from the request made. 
+         */
+        async getNewQuestions(context, ref){
             let response = fetch(ref.currentServiceUrl);
 
             if ((await response).status == 200) {
@@ -70,8 +76,14 @@ const store = createStore({
               return data;
             }
         },
-
-        async getNewQuestionsMulti(state, ref){
+        /**
+         * Function is ran on replay(But for multi questions). And sets new questions with the same parameters as the game before.
+         * As the function is async it needs to be defined as a action. 
+         * @param {object} context defined but not used. It can be used to commit other mutation functions
+         * @param {state()} ref instance of state
+         * @return {object} returns json object from the request made. 
+         */
+        async getNewQuestionsMulti(context, ref){
             let response = fetch(ref.currentServiceUrl);
 
             if ((await response).status == 200) {
@@ -85,8 +97,14 @@ const store = createStore({
               return data;
             }
         },
-
-            async updateUserScore(state, ref){
+        /**
+         * Updates the user to the Heroku text database if the users score is higher than his previous one.
+         * As the function is async it needs to be defined as an action. 
+         * @param {object} context defined but not used. It can be used to commit other mutation functions
+         * @param {list} list with id and user name
+         * @return {object} returns json object from the request made. 
+         */
+            async updateUserScore(context, ref){
                 console.log("Updateing highscore " + ref);
 
                 let apiURL = "https://noroff-trivia-api.herokuapp.com";
@@ -115,7 +133,13 @@ const store = createStore({
     
 
     mutations: {
-
+        /**
+         * Function is ran when user have chosen a answer for the question.(Multi questions)
+         * The function appends new questions and sets new scores.
+         * @param {object} state state instance to reference state variables. 
+         * @param {string} payload The answer that the user specified when played the game.
+         * @return {void} No return. Will return when there are no more questions.
+         */
         navToNextQuestionMulti(state, payload){
             console.log(JSON.stringify(state.globalTriviaDataJson));
           
@@ -142,7 +166,7 @@ const store = createStore({
             state.questionList = state.globalTriviaDataJson.results[state.grow].incorrect_answers
             state.questionList.push(state.globalTriviaDataJson.results[state.grow].correct_answer);
             
-            //Shuffle the multiple answers
+            //Shuffle the multiple answers. So the answers are not at the same place.
             let currentIndex = state.questionList.length,  randomIndex;
             while (currentIndex != 0) {
                 randomIndex = Math.floor(Math.random() * currentIndex);
@@ -154,7 +178,13 @@ const store = createStore({
             state.grow = state.grow + 1;
             
         },
-
+        /**
+         * Function is ran when user have chosen a answer for the question.(True/false questions)
+         * The function appends new questions and sets new scores.
+         * @param {object} state state instance to reference state variables. 
+         * @param {string} payload The answer that the user specified when played the game.
+         * @return {void} No return. Will return when there are no more questions.
+         */
         navToNextQuestion(state, payload){
              console.log(payload);
              state.answers.push(payload);   
@@ -184,7 +214,10 @@ const store = createStore({
             state.shrink = state.shrink + 1;
             
         },
-
+        /**
+         * Resets state variables on replay and fetches new questions
+         * @param {object} state state instance to reference state variables. 
+         */
         resetQuestion(state){
             store.dispatch('getNewQuestions', state);
             state.nextQuestion = state.globalTriviaDataJson.results[0].question;
@@ -193,7 +226,10 @@ const store = createStore({
             state.displayScore = 0;
             router.push({ path: '/question' });
         },
-
+        /**
+         * Resets state variables on replay and fetches new questions
+         * @param {object} state state instance to reference state variables. 
+         */
         resetQuestionMulti(state){
             console.log(state.currentServiceUrl);
             store.dispatch('getNewQuestionsMulti', state);

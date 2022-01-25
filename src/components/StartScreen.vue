@@ -9,6 +9,7 @@
         <h2 id="usrInputTitle">Enter input!</h2>
         <div class="cardItemColumn">
           <label for="label"><b>Enter user name: </b></label>
+            <!--Form to capture user name defined by the client-->
           <input
             id="userForm"
             type="String"
@@ -19,6 +20,7 @@
         </div>
         <div class="cardItemColumn">
           <label for="label"><b>Enter number of questions: </b></label>
+          <!--Form to capture question amount defined by the client-->
           <input
             id="numberOfQuestForm"
             value="2"
@@ -32,10 +34,12 @@
         </div>
         <div class="cardItemColumn">
           <label for="label"><b>Enter categories: </b></label>
+          <!--Select element to display all the different categories for the trivia game-->
           <select id="categoryForm" @change="onChangeCategories"></select>
         </div>
         <div class="cardItemColumn">
           <label for="label"><b>Enter type: </b></label>
+          <!--Select element to for the user to chose type of question-->
           <select
             id="typeForm"
             @change="onChangeType"
@@ -49,6 +53,7 @@
         </div>
         <div class="cardItemColumn">
           <label for="label"><b>Enter difficulty: </b></label>
+          <!--Select element to for the user to difficulty-->
           <select
             id="diffForm"
             name="LeaveType"
@@ -60,6 +65,7 @@
             <option value="hard">Hard</option>
           </select>
         </div>
+        <!--Button to start the game-->
         <div class="btn-group">
           <button
             style="margin: 20px"
@@ -138,25 +144,36 @@ export default {
       }
     },
 
+    /**
+     *Fetches the category data from the trivia api And then populates the select tag attached to it.
+     *This functions makes the call from the mount() function who runs every time the page gets rendered.
+     *populateSelectCategories() will get run if the response is OK.
+     */
     setCategoryElements: async function () {
       let response = fetch("https://opentdb.com/api_category.php");
       if ((await response).status == 200) {
         let categoryData = await (await response).json();
-        await this.populateSelectCategories(categoryData);
+        this.populateSelectCategories(categoryData);
       } else {
-        console.log(
-          "Could not Http.get data with service url: https://opentdb.com/api_category.php"
-        );
+        console.log("Could not Http.get data with service url: https://opentdb.com/api_category.php");
       }
     },
-
+    /**
+     *Populates the select tag by id="categoryForm".
+     * @param {string} categoryData JSON-response by the trivia category api is a parameter to populateSelectCategories.
+     */
     populateSelectCategories: function (categoryData) {
       var categoryForm = document.querySelector("#categoryForm");
       for (var i = 0; i < categoryData.trivia_categories.length; i++) {
         categoryForm.innerHTML = categoryForm.innerHTML + "<option value=" + categoryData.trivia_categories[i].id + ">" + categoryData.trivia_categories[i].name + "</option>";
       }
     },
-
+    /**
+     *Deletes a user by id
+     * @param {string} id user id.
+     * @param {string} apiURL heroku api url.
+     * @param {string} apiKey heroku api key.
+     */
     deleteUser: async function (id, apiURL, apiKey) {
       fetch(`${apiURL}/trivia/` + id, {
         method: "DELETE",
@@ -166,21 +183,26 @@ export default {
         },
       });
     },
-
+    /**
+     *Shuffles any array randomly.
+     * @param {list} array list to shuffle randomly.
+     */
     shuffle(array) {
-      let currentIndex = array.length,
-        randomIndex;
+      let currentIndex = array.length,randomIndex; 
+
       while (currentIndex != 0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-        [array[currentIndex], array[randomIndex]] = [
-          array[randomIndex],
-          array[currentIndex],
-        ];
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex],];
       }
       return array;
     },
-
+    /**
+     *Sets the initial state values from the VUex state management.
+     *As they do not need to be dynamic the are set hardcoded for now. 
+     * @param {object} data JSON object containing trivia.
+     * @param {string} serviceUrl The url defined to fetch trivia game data.
+     */
     setInitDataToState(data, serviceUrl){
         this.$store.state.currentServiceUrl = serviceUrl;
         this.$store.state.globalTriviaDataJson = data;
@@ -201,6 +223,7 @@ export default {
         this.$store.state.toggleButton = true;
 
         this.$router.push({ path: "/question" });
+
       } else if ((await response).status == 200 && type == "multiple") {
         let data = await (await response).json();
 
@@ -246,14 +269,14 @@ export default {
             let temp = await this.setUserToApi(userName, "0", apiURL, apiKey);
             this.$store.state.currentUserObject = [{ username: temp.username, score: temp.score, id: temp.id }];
             console.log(JSON.stringify(this.$store.state.currentUserObject));
-            await this.initGame(userUrl, typeList);
+            this.initGame(userUrl, typeList);
             this.dataReady = true;
             return;
           } else {
             console.log("user found");
             this.$store.state.currentUserObject = data;
             console.log(JSON.stringify(this.$store.state.currentUserObject));
-            await this.initGame(userUrl, typeList);
+            this.initGame(userUrl, typeList);
             this.dataReady = true;
             return;
           }
