@@ -17,49 +17,45 @@
                 <p id= "result" style="display:inline-block" >{{this.$store.state.currentUserObject[0].score}}</p>
              </div>
 
-                 <div class="cardItemColumn">
-                <label for="label"></label>
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Questions</th>
-                            <th>Correct answers</th>
-                            <th>Your answers</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="quest in this.$store.state.globalTriviaDataJson.results" :key="quest.id" >
-                            <td>{{quest.question}}</td>
-                            <td>{{quest.correct_answer}}</td>
-
-                        </tr>
-                            <tr v-for="ans in this.$store.state.answers" :key="ans.id">
-                            <td>{{ans}}</td>
-                            </tr>
-
-                    </tbody>
-                </table>
-                </div>   
-
-            <p id="questionList">{{this.$store.state.globalTriviaDataJson.results[0].questions}}</p>
+        <div style="display: flex; justify-content: space-around"> 
+            <div class="cardItemColumn" >
+                <label for="label"><b>Questions </b></label>
+                    <div v-for="quest in this.$store.state.globalTriviaDataJson.results" :key="quest.id">
+                    <p>{{quest.question}}</p>
+                    </div>
+            </div>
+            <div class="cardItemColumn" >
+                <label for="label"><b>Correct answers </b></label>
+                    <div v-for="corr in this.$store.state.globalTriviaDataJson.results" :key="corr.id">
+                    <p>{{corr.correct_answer}}</p>
+                    </div>
+            </div>
+             <div class="cardItemColumn" >
+                <label for="label"><b>Your answers </b></label>
+                    <div v-for="ans in this.$store.state.answers" :key="ans.id">
+                    <p>{{ans}}</p>
+                    </div>
+            </div>
+</div> 
 
         <div class="btn-group">
-          <button id="btn-true" style="margin:5px;" type="button" class="btn" v-on:click="navigateStartScreen()">Back to start!</button>
-          <button id="btn-false" style="margin:5px;" type="button" class="btn" v-on:click="rePlay()">Replay!</button> 
-
+            <div v-if="!this.$store.state.toggleButton">
+            <button id="btn-true" style="margin:5px;" type="button" class="btn" v-on:click="navigateStartScreen()">Back to start!</button>
+            <button id="btn-false" style="margin:5px;" type="button" class="btn" v-on:click="resetQuestionMulti()">Replay!</button> 
         </div>
-           
-
+            <div v-if="this.$store.state.toggleButton">
+            <button id="btn-true" style="margin:5px;" type="button" class="btn" v-on:click="navigateStartScreen()">Back to start!</button>
+            <button id="btn-false" style="margin:5px;" type="button" class="btn" v-on:click="resetQuestion()">Replay!</button> 
+            </div>
+        </div>
         </div>
     </div>
-       
-
     </header>
 </template>
 
 <script>
 
-import {mapState} from "vuex"
+import {mapState, mapMutations} from "vuex"
 
 export default {
 
@@ -78,6 +74,7 @@ export default {
     computed: {
         ...mapState(["correctAnswers"]),
         ...mapState(["globalTriviaDataJson"]),
+        ...mapState(["nextQuestion"]),
     },
 
     mounted() {
@@ -85,11 +82,18 @@ export default {
     },
 
     methods: {
+
+        ...mapMutations(["resetQuestion"]),
+        ...mapMutations(["resetQuestionMulti"]),
+
         navigateStartScreen(){
+            this.$store.state.answers.length = 0;
             this.$router.push({ path: '/' });
         },
 
         rePlay(){
+            //this.$store.state.nextQuestion = this.$store.state.globalTriviaDataJson.results[0].questions;
+            //this.$store.dispatch('test');
             this.$store.state.answers.length = 0;
             this.$router.push({ path: '/question' });
         },

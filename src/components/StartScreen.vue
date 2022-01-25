@@ -11,7 +11,7 @@
         </div>
         <div class="cardItemColumn">
             <label for="label"><b>Enter number of questions:  </b></label>
-            <input id='numberOfQuestForm' value="1" min="1" max="50" type="number" placeholder="1" name="numberInput" required>  
+            <input id='numberOfQuestForm' value="2" min="1" max="50" type="number" placeholder="2" name="numberInput" required>  
         </div>
         <div class="cardItemColumn">
             <label for="label"><b>Enter categories: </b></label>
@@ -138,6 +138,8 @@ export default {
 
         if((await response).status == 200 && (type == "boolean"  || type == "Any Type")){
             let data = await (await response).json();
+
+            console.log("object: " +  JSON.stringify(data));
 
             this.$store.state.globalTriviaDataJson = data;
             this.$store.state.category = data.results[0].category;
