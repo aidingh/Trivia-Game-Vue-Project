@@ -88,12 +88,11 @@ const store = createStore({
 
             if ((await response).status == 200) {
               let data = await (await response).json();
+              
               ref.globalTriviaDataJson = data;
-
               ref.nextQuestion = data.results[0].question;
               ref.questionList = data.results[0].incorrect_answers
               ref.questionList.push(data.results[0].correct_answer);
-              console.log(ref.nextQuestion);
               return data;
             }
         },
@@ -141,7 +140,7 @@ const store = createStore({
          * @return {void} No return. Will return when there are no more questions.
          */
         navToNextQuestionMulti(state, payload){
-            console.log(JSON.stringify(state.globalTriviaDataJson));
+            console.log(payload);
           
             state.answers.push(payload);
             if(payload == state.globalTriviaDataJson.results[state.grow-1].correct_answer){
@@ -207,9 +206,6 @@ const store = createStore({
                 return;
             }
 
-            console.log(state.shrink);
-            console.log(JSON.stringify(state.globalTriviaDataJson.results[state.shrink].question));
-
             state.nextQuestion = state.globalTriviaDataJson.results[state.shrink].question;
             state.shrink = state.shrink + 1;
             
@@ -231,7 +227,6 @@ const store = createStore({
          * @param {object} state state instance to reference state variables. 
          */
         resetQuestionMulti(state){
-            console.log(state.currentServiceUrl);
             store.dispatch('getNewQuestionsMulti', state);
 
             state.answers.length = 0;
