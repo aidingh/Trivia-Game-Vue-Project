@@ -119,7 +119,7 @@ export default {
   },
 
   computed: {
-     /**
+    /**
      *  ...mapState(["globalTriviaDataJson"], ["toggleButton"]), we can run a reference state variables as the are defined as a input to the mapState().
      * @param {string} globalTriviaDataJson state reference
      * @param {string} toggleButton state reference
@@ -131,7 +131,7 @@ export default {
 
   methods: {
     /**
-     * To run functions defined in as mutations in the store instance defined in main.js file. 
+     * To run functions defined in as mutations in the store instance defined in main.js file.
      *  With .....mapMutations(["navToNextQuestion"]) we can run a mutation function in a event handler.
      * @param {string} navToNextQuestion mutation reference
      * @param {string} navToNextQuestionMulti mutation reference
